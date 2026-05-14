@@ -1,0 +1,37 @@
+# Зависимости
+node_modules/
+package-lock.json
+yarn.lock
+
+# Логи и временные файлы
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Сборка и дистрибутивы
+dist/
+out/
+release/
+*.exe
+*.dmg
+*.AppImage
+*.deb
+*.rpm
+*.snap
+
+# Electron-специфичные
+electron-builder-output/
+.electron-cache/
+
+# Среды разработки
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Системные файлы
+.env
+.env.local
