@@ -70,6 +70,13 @@ async function renameFile(oldName, newName) {
   const oldPath = path.join(KNOWLEDGE_DIR, oldName);
   const newPath = path.join(KNOWLEDGE_DIR, newName);
   await fs.rename(oldPath, newPath);
+
+  const content = await fs.readFile(newPath, 'utf-8');
+  const parsed = grayMatter(content);
+  parsed.data.title = path.basename(newName, '.md');
+  const updated = grayMatter.stringify(parsed.content, parsed.data);
+  await fs.writeFile(newPath, updated, 'utf-8');
+
   return { success: true, filename: newName };
 }
 
