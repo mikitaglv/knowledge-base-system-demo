@@ -3,8 +3,6 @@ let currentFile = null;
 let currentFilter = null;
 let hasUnsavedChanges = false;
 let isRefreshing = false;
-let searchResults = null;
-let searchTimeout = null;
 
 const elements = {
   fileList: document.getElementById('file-list'),
@@ -60,10 +58,11 @@ function getFilteredFiles() {
     filtered = filtered.filter(f => f.tags && f.tags.includes(currentFilter));
   }
 
-  if (searchResults !== null) {
-    filtered = filtered.filter(f => searchResults.has(f.filename));
-  } else if (query) {
-    filtered = filtered.filter(f => f.title.toLowerCase().includes(query));
+  if (query) {
+    filtered = filtered.filter(f =>
+      f.title.toLowerCase().includes(query) ||
+      (f.content && f.content.toLowerCase().includes(query))
+    );
   }
 
   return filtered;
@@ -297,33 +296,8 @@ async function refreshFiles() {
   }
 }
 
-async function performSearch() {
-  const lastQuery = elements.searchInput.value.trim();
-  if (!lastQuery) {
-    searchResults = null;
-    renderFileList();
-    return;
-  }
-  const result = await window.api.search(lastQuery);
-  if (result.success && elements.searchInput.value.trim() === lastQuery) {
-    searchResults = new Set(result.results.map(r => r.filename));
-  } else if (!result.success) {
-    searchResults = null;
-  }
-  renderFileList();
-}
-
 elements.searchInput.addEventListener('input', () => {
-  clearTimeout(searchTimeout);
-  const query = elements.searchInput.value.trim();
-  if (!query) {
-    searchResults = null;
-    renderFileList();
-    return;
-  }
-  searchResults = null;
   renderFileList();
-  searchTimeout = setTimeout(performSearch, 200);
 });
 
 elements.newFileBtn.addEventListener('click', createFile);

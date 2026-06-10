@@ -82,7 +82,7 @@ class SearchIndex {
       }));
     }
 
-    const results = this.index.search(`${query}* ${query}`);
+    const results = this.index.search(query);
     return results.map(result => {
       const doc = this.documents.find(d => d.id === parseInt(result.ref));
       return {
@@ -125,7 +125,8 @@ class SearchIndex {
     return this.documents.map(doc => ({
       filename: doc.filename,
       title: doc.title,
-      tags: doc.tags
+      tags: doc.tags,
+      content: doc.content
     }));
   }
 }
