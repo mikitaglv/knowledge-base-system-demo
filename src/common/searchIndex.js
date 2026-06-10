@@ -82,8 +82,7 @@ class SearchIndex {
       }));
     }
 
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const results = this.index.search(escapedQuery + '*');
+    const results = this.index.search(`${query}* ${query}`);
     return results.map(result => {
       const doc = this.documents.find(d => d.id === parseInt(result.ref));
       return {

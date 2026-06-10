@@ -53,6 +53,7 @@ function showStatus(message, duration = 3000) {
 }
 
 function getFilteredFiles() {
+  const query = elements.searchInput.value.toLowerCase().trim();
   let filtered = files;
 
   if (currentFilter) {
@@ -61,6 +62,8 @@ function getFilteredFiles() {
 
   if (searchResults !== null) {
     filtered = filtered.filter(f => searchResults.has(f.filename));
+  } else if (query) {
+    filtered = filtered.filter(f => f.title.toLowerCase().includes(query));
   }
 
   return filtered;
@@ -295,16 +298,16 @@ async function refreshFiles() {
 }
 
 async function performSearch() {
-  const query = elements.searchInput.value.trim();
-  if (!query) {
+  const lastQuery = elements.searchInput.value.trim();
+  if (!lastQuery) {
     searchResults = null;
     renderFileList();
     return;
   }
-  const result = await window.api.search(query);
-  if (result.success) {
+  const result = await window.api.search(lastQuery);
+  if (result.success && elements.searchInput.value.trim() === lastQuery) {
     searchResults = new Set(result.results.map(r => r.filename));
-  } else {
+  } else if (!result.success) {
     searchResults = null;
   }
   renderFileList();
@@ -318,6 +321,8 @@ elements.searchInput.addEventListener('input', () => {
     renderFileList();
     return;
   }
+  searchResults = null;
+  renderFileList();
   searchTimeout = setTimeout(performSearch, 200);
 });
 
